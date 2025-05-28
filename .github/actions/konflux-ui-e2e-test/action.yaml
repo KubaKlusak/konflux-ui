@@ -16,6 +16,3 @@ runs:
         : Run Konflux UI E2E tests
         ./pr_check.sh test
       shell: bash
-
-    - name: Generate error logs
-      uses: ./github/actions/generate-error-logs

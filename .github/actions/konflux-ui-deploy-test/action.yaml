@@ -122,6 +122,3 @@ runs:
         : Prepare resources for E2E tests
         ./konflux-ci/test/e2e/prepare-e2e.sh
       shell: bash
-
-    - name: Run Konflux UI E2E tests
-      uses: ./.github/actions/konflux-ui-e2e-test
