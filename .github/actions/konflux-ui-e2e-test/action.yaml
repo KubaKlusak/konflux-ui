@@ -1,4 +1,4 @@
-name: Run Konflux UI E2E tests
+name: 'Run Konflux UI E2E tests'
 
 runs:
   using: "composite"
