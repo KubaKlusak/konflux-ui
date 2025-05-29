@@ -1,8 +1,10 @@
 name: PR Check Test
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened, labeled, unlabeled]
+  #pull_request_target:
+    #types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
   test:
@@ -30,7 +32,7 @@ jobs:
           #GITHUB_TOKEN: ${{ secrets.HAC_TEST_GH_TOKEN }}
 
   deploy-konfux-ui:
-    needs: check-org-membership
+    #needs: check-org-membership
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -60,11 +62,7 @@ jobs:
         with:
           job-type: 'on-pr'
   
-  e2e-test:
-    needs: deploy-konfux-ui
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test konflux-ui
+      - name: Konflux-ui e2e test
         uses: ./.github/actions/konflux-ui-e2e-test
         env:
           CYPRESS_GH_TOKEN: ${{ env.HAC_TEST_GH_TOKEN }}
@@ -75,9 +73,5 @@ jobs:
           CYPRESS_PASSWORD: ${{ env.CYPRESS_PASSWORD }}
           SEALIGHTS_TOKEN: ${{ env.SEALIGHTS_TOKEN }}
   
-  generate-error-logs:
-    needs: e2e-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: 
+      - name: Generate error logs
         uses: ./.github/actions/generate-error-logs
