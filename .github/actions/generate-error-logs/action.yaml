@@ -1,4 +1,4 @@
-- name: Generate error logs
+name: Generate error logs
 
 runs:
   using: "composite"
