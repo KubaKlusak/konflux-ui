@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print test
-        run echo "Please work!"
+        run: echo "Please work!"
+  
   #check-org-membership:
     #runs-on: ubuntu-latest
     #steps:
@@ -17,7 +18,7 @@ jobs:
         #run: |
           #ORG="${{ github.repository_owner }}"
           #PR_AUTHOR=$(jq --raw-output .pull_request.user.login $GITHUB_EVENT_PATH)
-          
+
           #if gh api "/orgs/$ORG/members/$PR_AUTHOR"; then
           #  echo "PR author is a member of $ORG GitHub organization, running tests."
            # exit 0
