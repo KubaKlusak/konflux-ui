@@ -1,5 +1,5 @@
 name: 'Run Konflux UI E2E tests'
-
+description: ''
 runs:
   using: "composite"
   steps:
