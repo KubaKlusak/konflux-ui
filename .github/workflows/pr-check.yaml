@@ -74,3 +74,4 @@ jobs:
   
       - name: Generate error logs
         uses: ./.github/actions/generate-error-logs
+
