@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Print test
-        run echo "Please work!"
+        run: echo "Please work!"
   #check-org-membership:
     #runs-on: ubuntu-latest
     #steps:
