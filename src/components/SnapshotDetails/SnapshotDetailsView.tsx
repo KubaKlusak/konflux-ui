@@ -1,11 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Bullseye, Spinner, Text, TextVariants } from '@patternfly/react-core';
-import { SnapshotLabels } from '../../consts/pipelinerun';
+import { SnapshotLabels } from '../../consts/snapshots';
 import { usePipelineRun } from '../../hooks/usePipelineRuns';
 import { useSnapshot } from '../../hooks/useSnapshots';
 import { HttpError } from '../../k8s/error';
-import { SNAPSHOT_DETAILS_PATH } from '../../routes/paths';
+import { SNAPSHOT_DETAILS_PATH, SNAPSHOT_LIST_PATH } from '../../routes/paths';
 import { RouterParams } from '../../routes/utils';
 import ErrorEmptyState from '../../shared/components/empty-state/ErrorEmptyState';
 import { Timestamp } from '../../shared/components/timestamp/Timestamp';
@@ -21,11 +21,12 @@ const SnapshotDetailsView: React.FC = () => {
 
   const applicationBreadcrumbs = useApplicationBreadcrumbs();
 
-  const [snapshot, loaded, loadErr] = useSnapshot(namespace, snapshotName);
+  const [snapshot, loaded, snapshotError] = useSnapshot(namespace, snapshotName);
 
   const buildPipelineName = React.useMemo(
-    () => loaded && !loadErr && snapshot?.metadata?.labels?.[SnapshotLabels.BUILD_PIPELINE_LABEL],
-    [snapshot, loaded, loadErr],
+    () =>
+      loaded && !snapshotError && snapshot?.metadata?.labels?.[SnapshotLabels.BUILD_PIPELINE_LABEL],
+    [snapshot, loaded, snapshotError],
   );
 
   const [buildPipelineRun, plrLoaded, plrLoadError] = usePipelineRun(
@@ -38,17 +39,19 @@ const SnapshotDetailsView: React.FC = () => {
     [plrLoaded, plrLoadError, buildPipelineRun],
   );
 
-  if (loadErr || (loaded && !snapshot)) {
+  if (snapshotError || (loaded && !snapshot)) {
     return (
       <ErrorEmptyState
-        httpError={HttpError.fromCode(loadErr ? (loadErr as { code: number }).code : 404)}
+        httpError={HttpError.fromCode(
+          snapshotError ? (snapshotError as { code: number }).code : 404,
+        )}
         title="Snapshot not found"
         body="No such snapshot"
       />
     );
   }
 
-  if (!plrLoadError && !plrLoaded) {
+  if (!plrLoadError && !plrLoaded && !loaded) {
     return (
       <Bullseye>
         <Spinner size="lg" />
@@ -63,7 +66,10 @@ const SnapshotDetailsView: React.FC = () => {
         breadcrumbs={[
           ...applicationBreadcrumbs,
           {
-            path: `#`,
+            path: SNAPSHOT_LIST_PATH.createPath({
+              workspaceName: namespace,
+              applicationName,
+            }),
             name: 'Snapshots',
           },
           {

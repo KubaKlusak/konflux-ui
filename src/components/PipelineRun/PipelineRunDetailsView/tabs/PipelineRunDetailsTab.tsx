@@ -42,6 +42,7 @@ import {
   getPipelineRunStatusResultForName,
   getPipelineRunStatusResults,
   pipelineRunStatus,
+  SBOMResultKeys,
 } from '../../../../utils/pipeline-utils';
 import GitRepoLink from '../../../GitLink/GitRepoLink';
 import MetadataList from '../../../MetadataList';
@@ -68,6 +69,17 @@ const PipelineRunDetailsTab: React.FC = () => {
       return null;
     }
   }, [snapshotStatusAnnotation]);
+
+  const imageDigest = getPipelineRunStatusResultForName(
+    SBOMResultKeys.IMAGE_DIGEST,
+    pipelineRun,
+  )?.value;
+  const sbomSha = getPipelineRunStatusResultForName(SBOMResultKeys.SBOM_SHA, pipelineRun)?.value;
+
+  const sbomURL = React.useMemo(() => {
+    if (!imageDigest) return null;
+    return generateSbomUrl(imageDigest, sbomSha) || null;
+  }, [generateSbomUrl, imageDigest, sbomSha]);
 
   const loadError = error || taskRunError;
   if (loadError) {
@@ -98,7 +110,6 @@ const PipelineRunDetailsTab: React.FC = () => {
       : '',
   );
   const sha = getCommitSha(pipelineRun);
-  const imageDigest = getPipelineRunStatusResultForName('IMAGE_DIGEST', pipelineRun)?.value;
   const applicationName = pipelineRun.metadata?.labels[PipelineRunLabel.APPLICATION];
   const buildImage =
     pipelineRun.metadata?.annotations?.[PipelineRunLabel.BUILD_IMAGE_ANNOTATION] ||
@@ -257,11 +268,11 @@ const PipelineRunDetailsTab: React.FC = () => {
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                 )}
-                {imageDigest && (
+                {sbomURL && (
                   <DescriptionListGroup>
                     <DescriptionListTerm>SBOM</DescriptionListTerm>
                     <DescriptionListDescription>
-                      <ExternalLink href={generateSbomUrl(imageDigest)}>View SBOM</ExternalLink>
+                      <ExternalLink href={sbomURL}>View SBOM</ExternalLink>
                     </DescriptionListDescription>
                   </DescriptionListGroup>
                 )}

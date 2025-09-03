@@ -39,6 +39,8 @@ module.exports = {
           'UNSAFE_componentWillReceiveProps',
           'UNSAFE_componentWillMount',
           'link_name',
+          'snapshot_name',
+          'release_plan',
           'current_path',
           'component_name',
           'component_id',
@@ -162,6 +164,7 @@ module.exports = {
       node: {
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
+      typescript: {},
     },
     react: {
       version: 'detect',

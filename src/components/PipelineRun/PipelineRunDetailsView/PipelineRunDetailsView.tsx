@@ -1,14 +1,19 @@
 import * as React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Bullseye, Spinner } from '@patternfly/react-core';
-import { PIPELINE_RUNS_LIST_PATH, PIPELINE_RUNS_DETAILS_PATH } from '~/routes/paths';
-import { useNamespace } from '~/shared/providers/Namespace';
 import { PipelineRunLabel } from '../../../consts/pipelinerun';
 import { usePipelineRun } from '../../../hooks/usePipelineRuns';
 import { HttpError } from '../../../k8s/error';
 import { PipelineRunModel } from '../../../models';
+import {
+  INTEGRATION_TEST_PIPELINE_LIST_PATH,
+  PIPELINE_RUNS_DETAILS_PATH,
+  PIPELINE_RUNS_LIST_PATH,
+  RELEASE_PIPELINE_LIST_PATH,
+} from '../../../routes/paths';
 import { RouterParams } from '../../../routes/utils';
 import ErrorEmptyState from '../../../shared/components/empty-state/ErrorEmptyState';
+import { useNamespace } from '../../../shared/providers/Namespace';
 import { useApplicationBreadcrumbs } from '../../../utils/breadcrumb-utils';
 import { isResourceEnterpriseContract } from '../../../utils/enterprise-contract-utils';
 import { pipelineRunCancel, pipelineRunStop } from '../../../utils/pipeline-actions';
@@ -20,6 +25,9 @@ import { usePipelinererunAction } from '../PipelineRunListView/pipelinerun-actio
 
 export const PipelineRunDetailsView: React.FC = () => {
   const { pipelineRunName } = useParams<RouterParams>();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const releaseName = queryParams.get('releaseName') || '';
   const namespace = useNamespace();
   const applicationBreadcrumbs = useApplicationBreadcrumbs();
 
@@ -56,16 +64,41 @@ export const PipelineRunDetailsView: React.FC = () => {
   const isEnterpriseContract = isResourceEnterpriseContract(pipelineRun);
 
   const applicationName = pipelineRun.metadata?.labels[PipelineRunLabel.APPLICATION];
+  const integrationTestName = queryParams.get('integrationTestName') || '';
+
+  const getDynamicPipelineRunsBreadcrumb = () => ({
+    path: (() => {
+      if (releaseName) {
+        return RELEASE_PIPELINE_LIST_PATH.createPath({
+          workspaceName: namespace,
+          applicationName,
+          releaseName,
+        });
+      }
+
+      if (integrationTestName) {
+        return INTEGRATION_TEST_PIPELINE_LIST_PATH.createPath({
+          workspaceName: namespace,
+          applicationName,
+          integrationTestName,
+        });
+      }
+
+      return PIPELINE_RUNS_LIST_PATH.createPath({
+        workspaceName: namespace,
+        applicationName,
+      });
+    })(),
+    name: 'Pipeline runs',
+  });
+
   return (
     <DetailsPage
       data-test="pipelinerun-details-test-id"
       headTitle={pipelineRunName}
       breadcrumbs={[
         ...applicationBreadcrumbs,
-        {
-          path: PIPELINE_RUNS_LIST_PATH.createPath({ workspaceName: namespace, applicationName }),
-          name: 'Pipeline runs',
-        },
+        getDynamicPipelineRunsBreadcrumb(),
         {
           path: PIPELINE_RUNS_DETAILS_PATH.createPath({
             workspaceName: namespace,

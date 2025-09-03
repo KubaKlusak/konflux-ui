@@ -21,6 +21,13 @@ const ReleaseDetailsView: React.FC = () => {
 
   const [release, loaded, error] = useRelease(namespace, releaseName);
 
+  if (!loaded) {
+    return (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
+  }
   if (error) {
     const httpError = HttpError.fromCode((error as { code: number }).code);
     return (
@@ -31,15 +38,6 @@ const ReleaseDetailsView: React.FC = () => {
       />
     );
   }
-
-  if (!loaded) {
-    return (
-      <Bullseye>
-        <Spinner />
-      </Bullseye>
-    );
-  }
-
   return (
     <DetailsPage
       headTitle={release.metadata.name}
@@ -75,6 +73,15 @@ const ReleaseDetailsView: React.FC = () => {
         {
           key: 'index',
           label: 'Overview',
+          isFilled: true,
+        },
+        {
+          key: 'pipelineruns',
+          label: 'Pipeline runs',
+        },
+        {
+          key: 'artifacts',
+          label: 'Release artifacts',
           isFilled: true,
         },
       ]}

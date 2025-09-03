@@ -1,3 +1,5 @@
+import { KonfluxInstanceEnvironmentType } from '~/types/konflux-public-info';
+
 export const FLAGS_STATUS = {
   wip: 'Unstable',
   ready: 'Stable',
@@ -15,7 +17,7 @@ export interface FeatureMeta {
    * Unique key for the feature flag.
    * This key is used to identify the feature flag in the codebase.
    */
-  key: FlagKey;
+  key: string;
   /**
    * Description of the feature flag.
    * This description is used to provide context for the feature flag.
@@ -31,15 +33,42 @@ export interface FeatureMeta {
    * This status is used to determine if the feature flag is a work in progress or ready for production.
    */
   status: FlagStatus;
+  /**
+   * Optional environment constraints.
+   * If specified, the flag is only available in the listed environments.
+   * If not specified, the flag is available in all environments.
+   */
+  environments?: KonfluxInstanceEnvironmentType[];
 }
 
-export const FLAGS = {
-  buildServiceAccount: {
-    key: 'buildServiceAccount',
-    description: 'New build service account model for secrets linking to components',
+const InternalFLAGS = {
+  'dark-theme': {
+    key: 'dark-theme',
+    description: 'Enable the theme switcher in the header to toggle between light and dark modes.',
     defaultEnabled: false,
     status: 'wip',
-  } as const,
-} as const;
+  },
+  'release-monitor': {
+    key: 'release-monitor',
+    description:
+      'New release monitor page that make user see all the related releases of viable namespaces',
+    defaultEnabled: false,
+    status: 'wip',
+  },
+  'column-management': {
+    key: 'column-management',
+    description: 'Enable the "Manage columns" button for tables with more than six columns',
+    defaultEnabled: true,
+    status: 'ready',
+  },
+  'system-notifications': {
+    key: 'system-notifications',
+    description: 'Enable system notifications badge and notification center',
+    defaultEnabled: false,
+    status: 'wip',
+  },
+} satisfies Record<string, FeatureMeta>;
 
-export type FlagKey = keyof typeof FLAGS;
+export type FlagKey = keyof typeof InternalFLAGS;
+
+export const FLAGS = InternalFLAGS as unknown as Record<FlagKey, FeatureMeta>;
