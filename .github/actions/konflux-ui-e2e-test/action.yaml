@@ -1,4 +1,3 @@
----
 name: 'Run Konflux UI E2E tests'
 description: 'Executes E2E tests for Konflux UI using Cypress'
 runs:
