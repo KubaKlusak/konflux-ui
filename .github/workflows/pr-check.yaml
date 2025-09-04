@@ -7,11 +7,6 @@ on:
     #types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print test
-        run: echo "Please work!"
   #check-org-membership:
     #runs-on: ubuntu-latest
     #steps:
