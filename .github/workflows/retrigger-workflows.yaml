@@ -9,9 +9,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo it back baby
-        if: ${{ contains(toLower(github.event.comment.body), '/retrigger') }}
-        run: "retrigger!!!"
+        env:
+          COMMENT: ${{ github.event.comment.body }}
+          #PR_BRANCH: ${{ github.event.issue.pull_request.head.ref }}
+        #if: ${{ contains(toLower(github.event.comment.body), '/retrigger') }}
+        run: |
+          COMMENT_LOWER=$(echo "$COMMENT" | tr '[:upper:]' '[:lower:]')
 
-      - name: Run if comment does NOT include /retrigger
-        if: ${{ !contains(toLower(github.event.comment.body), '/retrigger') }}
-        run: echo "No /retrigger found ❌"
+          echo "Comment: $COMMENT_LOWER"
+
+          if [[ "$COMMENT_LOWER" == /retrigger* ]]; then
+            echo "Command recognized."
+
+            # Extract optional workflow name
+            TARGET=$(echo "$COMMENT_LOWER" | cut -d' ' -f2-)
+
+            if [[ -z "$TARGET" ]]; then
+              echo "No specific workflow specified. Triggering all workflows..."
+              #echo "## Add more dispatches below as needed"
+
+              #gh workflow run workflow1.yml --ref "$PR_BRANCH"
+              #gh workflow run workflow2.yml --ref "$PR_BRANCH"
+            else
+              echo "Triggering workflow: $TARGET.yaml"
+              #gh workflow run "$TARGET.yaml" --ref "$PR_BRANCH"
+            fi
+          else
+            echo "No retrigger command found."
+          fi
+
+        shell: bash
