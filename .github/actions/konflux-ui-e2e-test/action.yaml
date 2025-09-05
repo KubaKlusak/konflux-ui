@@ -17,3 +17,9 @@ runs:
         : Run Konflux UI E2E tests
         ./pr_check.sh test
       shell: bash
+
+
+# its prob enviroment variables
+# $env.TARGET_BRANCH
+# + slnodejs end --buildsessionidfile buildSessionId --token .SEALIGHTS_TOKEN
+# Failed to run command 'endExecution'
