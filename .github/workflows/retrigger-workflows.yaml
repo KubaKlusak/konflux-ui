@@ -6,5 +6,6 @@ on:
 
 jobs:
   retrigger-pr-check:
+    runs-on: ubuntu-latest
     steps:
       echo github.event.comment.body
