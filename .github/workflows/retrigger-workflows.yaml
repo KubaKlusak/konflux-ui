@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo it back baby
-        run: echo ${{ github.event.comment.body }}
+        run: "echo hiya there" #echo ${{ github.event.comment.body }}
