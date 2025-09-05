@@ -9,4 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo it back baby
-        run: "echo hiya there" #echo ${{ github.event.comment.body }}
+        if: contains(toLower(github.event.comment.body), '/retrigger')
+        run: "retrigger!!!"
+
+      - name: Run if comment does NOT include /retrigger
+        if: ${{ !contains(toLower(github.event.comment.body), '/retrigger') }}
+        run: echo "No /retrigger found ❌"
