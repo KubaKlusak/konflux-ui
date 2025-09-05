@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Echo it back baby
-        if: contains(toLower(github.event.comment.body), '/retrigger')
+        if: ${{ contains(toLower(github.event.comment.body), '/retrigger') }}
         run: "retrigger!!!"
 
       - name: Run if comment does NOT include /retrigger
