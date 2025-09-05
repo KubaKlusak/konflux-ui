@@ -8,21 +8,19 @@ jobs:
   retrigger-pr-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Echo it back baby
+      - name: Retrigger Workflow
         env:
           COMMENT: ${{ github.event.comment.body }}
           #PR_BRANCH: ${{ github.event.issue.pull_request.head.ref }}
-        #if: ${{ contains(toLower(github.event.comment.body), '/retrigger') }}
         run: |
           COMMENT_LOWER=$(echo "$COMMENT" | tr '[:upper:]' '[:lower:]')
 
-          echo "Comment: $COMMENT_LOWER"
+          echo "$COMMENT_LOWER"
 
           if [[ "$COMMENT_LOWER" == /retrigger* ]]; then
-            echo "Command recognized."
+            echo "command present, checking for target."
 
-            # Extract optional workflow name
-            TARGET=$(echo "$COMMENT_LOWER" | cut -d' ' -f2-)
+            TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
 
             if [[ -z "$TARGET" ]]; then
               echo "No specific workflow specified. Triggering all workflows..."
