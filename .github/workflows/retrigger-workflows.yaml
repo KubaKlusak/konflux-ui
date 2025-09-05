@@ -8,4 +8,5 @@ jobs:
   retrigger-pr-check:
     runs-on: ubuntu-latest
     steps:
-      echo github.event.comment.body
+      name: Echo it back baby
+      run: echo ${{ github.event.comment.body }}
