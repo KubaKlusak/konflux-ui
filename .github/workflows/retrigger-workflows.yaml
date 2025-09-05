@@ -1,0 +1,10 @@
+name: Retrigger Workflow
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  retrigger-pr-check:
+    steps:
+      echo github.event.comment.body
