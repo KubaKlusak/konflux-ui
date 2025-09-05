@@ -1,4 +1,4 @@
-name: Retrigger Workflow
+name: 'Retrigger Workflow'
 
 on:
   issue_comment:
@@ -8,4 +8,5 @@ jobs:
   retrigger-pr-check:
     runs-on: ubuntu-latest
     steps:
-      echo github.event.comment.body
+      - name: Echo it back baby
+        run: "echo hiya there" #echo ${{ github.event.comment.body }}
