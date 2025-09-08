@@ -49,8 +49,6 @@ jobs:
             echo "Workflow file does NOT exist ❌"
             exit 1
           fi
-
-
         shell: bash
 
 #shell script assumes main branch exists
