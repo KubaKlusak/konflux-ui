@@ -12,8 +12,10 @@ jobs:
   retrigger-workflows:
     runs-on: ubuntu-latest
     steps:
-      - name: Retrigger Workflows
+      - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Retrigger Workflows
         env:
           COMMENT: ${{ github.event.comment.body }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -32,21 +34,20 @@ jobs:
 
           if [[ -z "$TARGET" ]]; then
             echo "No specific workflow specified. Triggering all workflows"
-
             exit 0
           fi
 
           echo "Triggering workflow: $TARGET.yaml"
 
           if [ -f ".github/workflows/$TARGET.yaml" ]; then
-            echo "Workflow file exists ✅"
+            echo "Workflow file exists"
             curl -X POST \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer $GH_TOKEN" \
               https://api.github.com/repos/${{ github.repository }}/actions/workflows/$TARGET.yaml/dispatches \
               -d '{"ref":"main"}'
           else
-            echo "Workflow file does NOT exist ❌"
+            echo "Workflow file does NOT exist"
             exit 1
           fi
         shell: bash
