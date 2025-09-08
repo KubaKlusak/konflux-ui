@@ -19,7 +19,6 @@ jobs:
         env:
           COMMENT: ${{ github.event.comment.body }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          #PR_BRANCH: ${{ github.event.issue.pull_request.head.ref }}
         run: |
           COMMENT_LOWER=$(echo "$COMMENT" | tr '[:upper:]' '[:lower:]')
           echo "Comment: \"$COMMENT\""
@@ -28,7 +27,7 @@ jobs:
             echo "Comment is not a retrigger command."
             exit 0
           fi
-          printf "Comment is a retrigger command.\n--------------------------------------------------\n"
+          printf "\n--------------------------------------------------\n"
 
           TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
 
@@ -54,7 +53,7 @@ jobs:
             WORKFLOWS=$(find .github/workflows -maxdepth 1 -type f -name "*.yaml" -exec basename {} \; | sed -E 's/\.yaml$//')
             for workflow in $WORKFLOWS; do
               Workflow_Exists $workflow
-              printf "Triggering workflow: \"$workflow.yaml.\"\n\n"
+              printf "\nTriggering workflow: \"$workflow.yaml.\"\n"
               Trigger_Workflow $workflow
             done
             echo "--------------------------------------------------"
@@ -62,7 +61,7 @@ jobs:
           fi
 
           Workflow_Exists $TARGET
-          printf "Triggering workflow: \"$TARGET.yaml.\"\n--------------------------------------------------\n"
+          printf "\nTriggering workflow: \"$TARGET.yaml.\"\n--------------------------------------------------\n"
           Trigger_Workflow $TARGET
 
         shell: bash
