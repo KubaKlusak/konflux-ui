@@ -28,7 +28,7 @@ jobs:
             echo "Comment is not a retrigger command."
             exit 0
           fi
-          echo "Comment is a retrigger command.\n----------"
+          printf "Comment is a retrigger command.\n----------\n"
 
           TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
 
@@ -49,12 +49,12 @@ jobs:
           }
 
           if [[ -z "$TARGET" ]]; then
-            echo "No specific workflow specified. Retriggering all workflows.\n"
+            printf "No specific workflow specified. Retriggering all workflows.\n\n"
 
             WORKFLOWS=$(find .github/workflows -maxdepth 1 -type f -name "*.yaml" -exec basename {} \; | sed -E 's/\.yaml$//')
             for workflow in $WORKFLOWS; do
               Workflow_Exists $workflow
-              echo 'Triggering workflow: "$workflow.yaml."\n'
+              printf 'Triggering workflow: "$workflow.yaml."\n\n'
               Trigger_Workflow $workflow
             done
             echo "----------"
@@ -62,7 +62,7 @@ jobs:
           fi
 
           Workflow_Exists $TARGET
-          echo 'Triggering workflow: "$TARGET.yaml."\n----------'
+          printf 'Triggering workflow: "$TARGET.yaml."\n----------\n'
           Trigger_Workflow $TARGET
 
         shell: bash
