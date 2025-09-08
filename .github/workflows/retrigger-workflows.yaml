@@ -32,27 +32,41 @@ jobs:
           echo "command present, checking for target"
           TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
 
-          if [[ -z "$TARGET" ]]; then
-            echo "No specific workflow specified. Triggering all workflows"
-            exit 0
-          fi
-
-          echo "Triggering workflow: $TARGET.yaml"
-
-          if [ -f ".github/workflows/$TARGET.yaml" ]; then
-            echo "Workflow file exists"
+          function Workflow_Exists() {
+            if [ ! -f ".github/workflows/$1.yaml" ]; then
+              echo "Workflow file $1.yaml does not exist."
+              exit 1
+            fi
+            return 1
+          }
+          
+          function Trigger_Workflow() {
             curl -X POST \
               -H "Accept: application/vnd.github+json" \
               -H "Authorization: Bearer $GH_TOKEN" \
-              https://api.github.com/repos/${{ github.repository }}/actions/workflows/$TARGET.yaml/dispatches \
+              https://api.github.com/repos/${{ github.repository }}/actions/workflows/$1.yaml/dispatches \
               -d '{"ref":"main"}'
-          else
-            echo "Workflow file does NOT exist"
-            exit 1
+          }
+
+          if [[ -z "$TARGET" ]]; then
+            echo "No specific workflow specified. Triggering all workflows."
+
+            WORKFLOWS=$(find .github/workflows -maxdepth 1 -type f -name "*.yaml" -exec basename {} \; | sed -E 's/\.yaml$//')
+            for workflow in $WORKFLOWS; do
+              Workflow_Exists $workflow
+              echo "Triggering workflow: $workflow.yaml."
+              Trigger_Workflow $workflow
+            exit 0
           fi
+
+          Workflow_Exists $TARGET
+          echo "Triggering workflow: $TARGET.yaml."
+          Trigger_Workflow $TARGET
+
         shell: bash
 
-#shell script assumes main branch exists
+# Assumes branch "main" exists
+# Assumes all workflow's files extentions are .yaml, not .yml
 
 
 # maybe add the ability to trigger multiple selected files:
