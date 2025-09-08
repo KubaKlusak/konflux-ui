@@ -15,6 +15,7 @@ jobs:
       - name: Retrigger Workflows
         env:
           COMMENT: ${{ github.event.comment.body }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           #PR_BRANCH: ${{ github.event.issue.pull_request.head.ref }}
         run: |
           COMMENT_LOWER=$(echo "$COMMENT" | tr '[:upper:]' '[:lower:]')
@@ -31,16 +32,22 @@ jobs:
           if [[ -z "$TARGET" ]]; then
             echo "No specific workflow specified. Triggering all workflows"
 
-            #gh workflow run workflow1.yml --ref "$PR_BRANCH"
-            #gh workflow run workflow2.yml --ref "$PR_BRANCH"
             exit 0
           fi
 
           echo "Triggering workflow: $TARGET.yaml"
-          #gh workflow run "$TARGET.yaml" --ref "$PR_BRANCH"
+
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/actions/workflows/$TARGET.yaml/dispatches \
+            -d '{"ref":"main"}'
 
         shell: bash
 
 
 # maybe add the ability to trigger multiple selected files:
 # /retrigger workflow1 workflow2 ...
+
+# check if target.yaml exists
+# run it somehow -> calcel if not finished?
