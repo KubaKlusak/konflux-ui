@@ -22,19 +22,19 @@ jobs:
           #PR_BRANCH: ${{ github.event.issue.pull_request.head.ref }}
         run: |
           COMMENT_LOWER=$(echo "$COMMENT" | tr '[:upper:]' '[:lower:]')
-          echo '"Comment: "$COMMENT"'
+          echo "Comment: \"$COMMENT\""
 
           if [[ "$COMMENT_LOWER" != /retrigger* ]]; then
             echo "Comment is not a retrigger command."
             exit 0
           fi
-          printf "Comment is a retrigger command.\n----------\n"
+          printf "Comment is a retrigger command.\n--------------------------------------------------\n"
 
           TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
 
           function Workflow_Exists() {
             if [ ! -f ".github/workflows/$1.yaml" ]; then
-              echo 'Workflow file "$1.yaml" does not exist.'
+              echo "Workflow file \"$1.yaml\" does not exist."
               exit 1
             fi
             return 0 
@@ -54,15 +54,15 @@ jobs:
             WORKFLOWS=$(find .github/workflows -maxdepth 1 -type f -name "*.yaml" -exec basename {} \; | sed -E 's/\.yaml$//')
             for workflow in $WORKFLOWS; do
               Workflow_Exists $workflow
-              printf 'Triggering workflow: "$workflow.yaml."\n\n'
+              printf "Triggering workflow: \"$workflow.yaml.\"\n\n"
               Trigger_Workflow $workflow
             done
-            echo "----------"
+            echo "--------------------------------------------------"
             exit 0
           fi
 
           Workflow_Exists $TARGET
-          printf 'Triggering workflow: "$TARGET.yaml."\n----------\n'
+          printf "Triggering workflow: \"$TARGET.yaml.\"\n--------------------------------------------------\n"
           Trigger_Workflow $TARGET
 
         shell: bash
