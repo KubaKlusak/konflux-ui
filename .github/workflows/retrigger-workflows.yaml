@@ -53,7 +53,7 @@ jobs:
             WORKFLOWS=$(find .github/workflows -maxdepth 1 -type f -name "*.yaml" -exec basename {} \; | sed -E 's/\.yaml$//')
             for workflow in $WORKFLOWS; do
               Workflow_Exists $workflow
-              printf "\nTriggering workflow: \"$workflow.yaml\".\n"
+              printf "\nTriggering workflow: \"%s.yaml\".\n" "$workflow"
               Trigger_Workflow $workflow
             done
             printf "\n--------------------------------------------------\n"
@@ -61,8 +61,9 @@ jobs:
           fi
 
           Workflow_Exists $TARGET
-          printf "\nTriggering workflow: \"$TARGET.yaml\".\n--------------------------------------------------\n"
+          printf "--------------------------------------------------\n\nTriggering workflow: \"%s.yaml\".\n" "$TARGET"
           Trigger_Workflow $TARGET
+          printf "\n--------------------------------------------------\n"
 
         shell: bash
 
