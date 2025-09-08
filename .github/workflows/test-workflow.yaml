@@ -1,0 +1,11 @@
+name: Test Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  echo-back:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo back
+        run: echo "Triggered from dispatcher!"
