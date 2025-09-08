@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Retrigger Workflows
+        uses: actions/checkout@v3
         env:
           COMMENT: ${{ github.event.comment.body }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -51,6 +52,8 @@ jobs:
 
 
         shell: bash
+
+#shell script assumes main branch exists
 
 
 # maybe add the ability to trigger multiple selected files:
