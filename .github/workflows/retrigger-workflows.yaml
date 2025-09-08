@@ -1,39 +1,46 @@
-name: 'Retrigger Workflow'
+name: 'Retrigger Workflows'
 
 on:
   issue_comment:
     types: [created]
 
+permissions:
+  actions: write
+  contents: read
+
 jobs:
-  retrigger-pr-check:
+  retrigger-workflows:
     runs-on: ubuntu-latest
     steps:
-      - name: Retrigger Workflow
+      - name: Retrigger Workflows
         env:
           COMMENT: ${{ github.event.comment.body }}
           #PR_BRANCH: ${{ github.event.issue.pull_request.head.ref }}
         run: |
           COMMENT_LOWER=$(echo "$COMMENT" | tr '[:upper:]' '[:lower:]')
+          echo "Message: $COMMENT"
 
-          echo "$COMMENT_LOWER"
-
-          if [[ "$COMMENT_LOWER" == /retrigger* ]]; then
-            echo "command present, checking for target."
-
-            TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
-
-            if [[ -z "$TARGET" ]]; then
-              echo "No specific workflow specified. Triggering all workflows..."
-              #echo "## Add more dispatches below as needed"
-
-              #gh workflow run workflow1.yml --ref "$PR_BRANCH"
-              #gh workflow run workflow2.yml --ref "$PR_BRANCH"
-            else
-              echo "Triggering workflow: $TARGET.yaml"
-              #gh workflow run "$TARGET.yaml" --ref "$PR_BRANCH"
-            fi
-          else
-            echo "No retrigger command found."
+          if [[ "$COMMENT_LOWER" != /retrigger* ]]; then
+            echo "No /retrigger command found."
+            exit 0
           fi
 
+          echo "command present, checking for target"
+          TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
+
+          if [[ -z "$TARGET" ]]; then
+            echo "No specific workflow specified. Triggering all workflows"
+
+            #gh workflow run workflow1.yml --ref "$PR_BRANCH"
+            #gh workflow run workflow2.yml --ref "$PR_BRANCH"
+            exit 0
+          fi
+
+          echo "Triggering workflow: $TARGET.yaml"
+          #gh workflow run "$TARGET.yaml" --ref "$PR_BRANCH"
+
         shell: bash
+
+
+# maybe add the ability to trigger multiple selected files:
+# /retrigger workflow1 workflow2 ...
