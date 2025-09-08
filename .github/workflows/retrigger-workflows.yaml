@@ -49,14 +49,12 @@ jobs:
           if [[ -z "$TARGET" ]]; then
             echo "No specific workflow specified. Retriggering all workflows."
             echo "--------------------------------------------------"
-            echo ""
 
             WORKFLOWS=$(find .github/workflows -maxdepth 1 -type f -name "*.yaml" -exec basename {} \; | sed -E 's/\.yaml$//')
             for workflow in $WORKFLOWS; do
               Workflow_Exists $workflow
               echo ""
               echo "Triggering workflow: \"$workflow.yaml\"."
-              echo ""
               Trigger_Workflow $workflow
             done
             echo ""
@@ -68,7 +66,6 @@ jobs:
           echo "--------------------------------------------------"
           echo ""
           echo "Triggering workflow: \"$TARGET.yaml\"."
-          echo ""
           Trigger_Workflow $TARGET
           echo ""
           echo "--------------------------------------------------"
