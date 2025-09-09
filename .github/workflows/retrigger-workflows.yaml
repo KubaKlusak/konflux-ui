@@ -1,0 +1,84 @@
+name: 'Retrigger Workflows'
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  retrigger-workflows:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Retrigger Workflows
+        env:
+          COMMENT: ${{ github.event.comment.body }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMENT_LOWER=$(echo "$COMMENT" | tr '[:upper:]' '[:lower:]')
+          echo "Comment: \"$COMMENT\""
+
+          if [[ "$COMMENT_LOWER" != /retrigger* ]]; then
+            echo "Comment is not a retrigger command."
+            exit 0
+          fi
+
+          TARGET=$(echo "$COMMENT_LOWER" | awk '{print $2}')
+
+          function Workflow_Exists() {
+            if [ ! -f ".github/workflows/$1.yaml" ]; then
+              echo "Workflow file \"$1.yaml\" does not exist."
+              exit 1
+            fi
+            return 0 
+          }
+          
+          function Trigger_Workflow() {
+            curl -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              https://api.github.com/repos/${{ github.repository }}/actions/workflows/$1.yaml/dispatches \
+              -d '{"ref":"main"}'
+          }
+
+          if [[ -z "$TARGET" ]]; then
+            echo "No specific workflow specified. Retriggering all workflows."
+            echo "--------------------------------------------------"
+
+            WORKFLOWS=$(find .github/workflows -maxdepth 1 -type f -name "*.yaml" -exec basename {} \; | sed -E 's/\.yaml$//')
+            for workflow in $WORKFLOWS; do
+              Workflow_Exists $workflow
+              echo ""
+              echo "Triggering workflow: \"$workflow.yaml\"."
+              Trigger_Workflow $workflow
+            done
+            echo ""
+            echo "--------------------------------------------------"
+            exit 0
+          fi
+
+          Workflow_Exists $TARGET
+          echo "--------------------------------------------------"
+          echo ""
+          echo "Triggering workflow: \"$TARGET.yaml\"."
+          Trigger_Workflow $TARGET
+          echo ""
+          echo "--------------------------------------------------"
+
+        shell: bash
+
+# Assumes branch "main" exists
+# Assumes all workflow's files extentions are .yaml, not .yml
+# Would get stuck in an infinite loop if workflow_dispatch was added!
+
+
+# maybe add the ability to trigger multiple selected files:
+# /retrigger workflow1 workflow2 ...
+
+# check if target.yaml exists
+# run it somehow -> calcel if not finished?
