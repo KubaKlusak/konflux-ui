@@ -74,6 +74,7 @@ jobs:
 
 # Assumes branch "main" exists
 # Assumes all workflow's files extentions are .yaml, not .yml
+# Would get stuck in an infinite loop if workflow_dispatch was added!
 
 
 # maybe add the ability to trigger multiple selected files:
