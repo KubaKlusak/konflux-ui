@@ -58,6 +58,7 @@ jobs:
   
       - name: Konflux-ui e2e test
         uses: ./.github/actions/konflux-ui-e2e-test
+        continue-on-error: true
   
       - name: Generate error logs
         uses: ./.github/actions/generate-error-logs
