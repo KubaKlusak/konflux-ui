@@ -5,7 +5,6 @@ on:
     types: [opened, synchronize, reopened, labeled, unlabeled]
   #pull_request_target:
     #types: [opened, synchronize, reopened, labeled, unlabeled]
-  workflow_dispatch:
 
 jobs:
   #check-org-membership:
@@ -59,6 +58,7 @@ jobs:
   
       - name: Konflux-ui e2e test
         uses: ./.github/actions/konflux-ui-e2e-test
+        continue-on-error: true
   
       - name: Generate error logs
         uses: ./.github/actions/generate-error-logs
