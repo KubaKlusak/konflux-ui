@@ -43,7 +43,10 @@ const IntegrationTestSidePanel: React.FC<
   const namespace = useNamespace();
   const workflowData = workflowNode.getData();
   const integrationTestPipeline = workflowData.resource as PipelineRunKind;
-  const [taskRuns] = useTaskRuns(namespace, integrationTestPipeline?.metadata.name);
+  const [taskRuns, taskRunsLoaded, taskRunsError] = useTaskRuns(
+    namespace,
+    integrationTestPipeline?.metadata.name,
+  );
 
   const duration = integrationTestPipeline
     ? calculateDuration(
@@ -80,7 +83,7 @@ const IntegrationTestSidePanel: React.FC<
             <StatusIconWithTextLabel status={workflowNode.getData().status} />
           </span>
           <span className="pf-v5-u-mt-xs commit-side-panel__subtext">
-            <img src={PipelineIcon} alt="pipeline run" /> Integration test
+            <PipelineIcon role="img" aria-label="Pipeline run" /> Integration test
           </span>
           <DrawerActions>
             <DrawerCloseButton onClick={onClose} />
@@ -147,7 +150,7 @@ const IntegrationTestSidePanel: React.FC<
                 )}
               </DescriptionListDescription>
             </DescriptionListGroup>
-            {integrationTestPipeline ? (
+            {integrationTestPipeline && taskRunsLoaded && !taskRunsError ? (
               <ScanDescriptionListGroup taskRuns={taskRuns} hideIfNotFound showLogsLink />
             ) : null}
           </DescriptionList>

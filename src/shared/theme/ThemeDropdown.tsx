@@ -11,7 +11,8 @@ import { CogIcon } from '@patternfly/react-icons/dist/esm/icons/cog-icon';
 import { MoonIcon } from '@patternfly/react-icons/dist/esm/icons/moon-icon';
 import { SunIcon } from '@patternfly/react-icons/dist/esm/icons/sun-icon';
 import { THEME_SYSTEM, THEME_DARK, THEME_LIGHT, THEME_LABELS } from './const';
-import { useTheme, ThemePreference } from './useTheme';
+import { ThemePreference } from './types';
+import { useTheme } from './useTheme';
 
 interface ThemeDropdownProps {
   /** Custom class for the dropdown toggle */
@@ -53,7 +54,11 @@ export const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ className, showTex
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      variant="plain"
+      style={{
+        border: '1px solid var(--pf-v5-global--Color--200)',
+        borderRadius: 'var(--pf-v5-global--BorderRadius--lg)',
+      }}
+      variant="plainText"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -82,6 +87,7 @@ export const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ className, showTex
           isSelected={preference === THEME_SYSTEM}
           data-test="theme-system"
           icon={<CogIcon />}
+          description="Follow system preference"
         >
           {THEME_LABELS[THEME_SYSTEM]}
         </DropdownItem>
@@ -90,6 +96,7 @@ export const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ className, showTex
           isSelected={preference === THEME_LIGHT}
           data-test="theme-light"
           icon={<SunIcon />}
+          description="Always use light mode"
         >
           {THEME_LABELS[THEME_LIGHT]}
         </DropdownItem>
@@ -98,6 +105,7 @@ export const ThemeDropdown: React.FC<ThemeDropdownProps> = ({ className, showTex
           isSelected={preference === THEME_DARK}
           data-test="theme-dark"
           icon={<MoonIcon />}
+          description="Always use dark mode"
         >
           {THEME_LABELS[THEME_DARK]}
         </DropdownItem>
