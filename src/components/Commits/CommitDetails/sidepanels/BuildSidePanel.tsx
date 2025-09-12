@@ -44,7 +44,10 @@ const BuildSidePanel: React.FC<React.PropsWithChildren<PipelineSidePanelBodyProp
   const namespace = useNamespace();
   const workflowData = workflowNode.getData();
   const pipelineRun = workflowData.resource as PipelineRunKind;
-  const [taskRuns] = useTaskRuns(namespace, pipelineRun.metadata.name);
+  const [taskRuns, taskRunsLoaded, taskRunsError] = useTaskRuns(
+    namespace,
+    pipelineRun?.metadata?.name ?? '',
+  );
 
   if (!pipelineRun) {
     return null;
@@ -80,7 +83,7 @@ const BuildSidePanel: React.FC<React.PropsWithChildren<PipelineSidePanelBodyProp
             <StatusIconWithTextLabel status={workflowNode.getData().status} />
           </span>
           <span className="pf-v5-u-mt-xs commit-side-panel__subtext">
-            <img src={PipelineIcon} alt="pipeline run" /> Pipeline run
+            <PipelineIcon role="img" aria-label="Pipeline run" /> Pipeline run
           </span>
           <DrawerActions>
             <DrawerCloseButton onClick={onClose} />
@@ -143,7 +146,9 @@ const BuildSidePanel: React.FC<React.PropsWithChildren<PipelineSidePanelBodyProp
                 )}
               </DescriptionListDescription>
             </DescriptionListGroup>
-            <ScanDescriptionListGroup taskRuns={taskRuns} hideIfNotFound />
+            {taskRunsLoaded && !taskRunsError && (
+              <ScanDescriptionListGroup taskRuns={taskRuns} hideIfNotFound />
+            )}
             <DescriptionListGroup>
               <DescriptionListDescription>
                 <Link
