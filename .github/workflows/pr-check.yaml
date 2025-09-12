@@ -59,6 +59,7 @@ jobs:
 
     runs-on: ubuntu-latest
     env:
+      CYPRESS_GH_TOKEN: ${{ env.HAC_TEST_GH_TOKEN }}
       TARGET_BRANCH: ${{ github.base_ref }}
       SOURCE_BRANCH: ${{ github.head_ref }}
       PR_NUMBER: ${{ github.event.number }}
