@@ -147,3 +147,6 @@ Job history is available [here](https://prow.ci.openshift.org/job-history/gs/ori
 If you find a problem with the tests, feel free to open an issue at the [Konflux-UI Jira project](https://issues.redhat.com/projects/KFLUXUI). You can set the label as `qe` to indicate it is a quality problem.
 
 <!-- If you discover a production bug thanks to a test failure, please label any issue created for that bug as `ci-fail`. That way we can see all this automation has actually generated some value. -->
+
+
+bla bla bla 
